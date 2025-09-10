@@ -25,10 +25,11 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(8, 5), dpi=200)
     plt.plot(times, [c_birth(N_0, rate, t) for t in times], label="Exact")
-    for step in np.logspace(-1, 0, 2):
+    for step in [0.2, 1.0]:
         e_times, e_values = euler(N_0, rate, 0, step, 10)
-        plt.plot(e_times, e_values, label=rf"$\tau = {step:.2f}$")
+        plt.plot(e_times, e_values, marker="o", label=rf"$\tau = {step:.2f}$")
     plt.grid()
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    plt.savefig("/home/federico/obsidian/master/files/euler.png")
+    # plt.show()
