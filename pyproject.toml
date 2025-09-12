@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simulator"   # nome del pacchetto
+version = "0.1.0"
+description = "Routine di simulazione per sistemi complessi"
+authors = [ {name = "Federico", email = "kiko.bustaffa@gmail.com"} ]
+
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "pandas",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["simulate"]

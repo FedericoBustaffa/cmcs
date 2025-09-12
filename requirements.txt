@@ -1,6 +1,4 @@
-numpy
-matplotlib
-pandas
 ipykernel
 notebook
 jupyterlab
+pyqt6
