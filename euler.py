@@ -37,12 +37,12 @@ if __name__ == "__main__":
     # euler
     for step in [0.2, 1.0]:
         e_times, e_values = euler(N_0, rate, 0, step, 10)
-        plt.plot(e_times, e_values, label=rf"$\tau = {step:.2f}$")
+        plt.plot(e_times, e_values, marker="s", label=rf"$\tau = {step:.2f}$")
 
     # scipy odeint
     times = np.linspace(0, 10, 10)
     sol = odeint(density, N_0, times, args=(rate,))
-    plt.plot(times, sol, label="scipy")
+    plt.plot(times, sol, marker="s", label="scipy")
 
     plt.xlabel("Time")
     plt.ylabel("Density")
