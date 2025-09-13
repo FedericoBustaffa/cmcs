@@ -3,11 +3,13 @@ from functools import partial
 import matplotlib.pyplot as plt
 
 recurrences = []
+initials = []
 labels = []
 
 
-def add_recurrence(func, *args, label=None):
+def add_recurrence(func, n0, *args, label=None):
     recurrences.append(partial(func, *args))
+    initials.append(n0)
     labels.append(label)
 
 
@@ -16,6 +18,7 @@ def run_simulation(times, title=None):
     for r in recurrences:
         values.append([r(t) for t in times])
 
+    plt.figure(dpi=200)
     if title is not None:
         plt.title(title)
     for v, l in zip(values, labels):
@@ -28,11 +31,6 @@ def run_simulation(times, title=None):
 
 
 if __name__ == "__main__":
-    # linear growth simulation
-    def density(n0, rate, t):
-        if t == 0:
-            return n0
-        return rate * density(n0, rate, t - 1)
 
     def adults(n0, gamma, death_rate, t):
         if t == 0:
