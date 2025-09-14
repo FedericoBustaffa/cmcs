@@ -1,54 +1,46 @@
-from functools import partial
-
 import matplotlib.pyplot as plt
 
-recurrences = []
-initials = []
-labels = []
 
+class Simulator:
+    def __init__(self, func, *params):
+        self.update = func
+        self.params = params
 
-def add_recurrence(func, n0, *args, label=None):
-    recurrences.append(partial(func, *args))
-    initials.append(n0)
-    labels.append(label)
+    def run(self, initial_values, steps):
+        values = [initial_values]
+        for _ in range(steps):
+            values.append(self.update(initial_values, *self.params))
+            initial_values = values[-1]
 
-
-def run_simulation(times, title=None):
-    values = []
-    for r in recurrences:
-        values.append([r(t) for t in times])
-
-    plt.figure(dpi=200)
-    if title is not None:
-        plt.title(title)
-    for v, l in zip(values, labels):
-        plt.plot(times, v, label=l)
-
-    plt.grid()
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
+        return [list(i) for i in list(zip(*values))]
 
 
 if __name__ == "__main__":
 
-    def adults(n0, gamma, death_rate, t):
-        if t == 0:
-            return n0
+    def density(n0, alpha, beta, gamma):
+        a0, c0 = n0
+        a_new = (1 - alpha) * a0 + gamma * c0
+        c_new = (1 - gamma) * c0 + beta * a0
+        return a_new, c_new
 
-        At = adults(n0, gamma, death_rate, t - 1)
-        Ct = children(0)
-        return (1 - death_rate) * At + gamma * Ct
+    a0 = 50  # initial adults
+    c0 = 50  # initial children
+    alpha = 0.01  # adults death rate
+    beta = 0.05  # children birth rate
+    gamma = 0.18  # children to adults rate
+    years = 50
 
-    def children(n0, beta, gamma, t):
-        if t == 0:
-            return n0
+    sim = Simulator(density, alpha, beta, gamma)
+    adults, children = sim.run((a0, c0), years)
+    times = [t for t in range(years + 1)]
 
-    initial_values = [1, 2, 3]
-    rates = [0.9, 1, 1.1]
-    times = [i for i in range(10)]
-
-    for n0 in initial_values:
-        for r in rates:
-            add_recurrence(density, n0, r, label=rf"$n_0 = {n0}, r = {r}$")
-    run_simulation(times, "Linear Growth")
+    plt.figure(dpi=200)
+    plt.title(
+        f"Adults and Children Density\n $a_0 = {a0}, c_0 = {c0}, \\alpha = {alpha}, \\beta={beta}, \\gamma = {gamma}$"
+    )
+    plt.plot(times, adults, label="adults")
+    plt.plot(times, children, label="children")
+    plt.plot(times, [a + c for a, c in zip(adults, children)], label="total")
+    plt.legend()
+    plt.grid()
+    plt.show()
