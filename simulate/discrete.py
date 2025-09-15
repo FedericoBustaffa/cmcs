@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 def plot_simulation(times: list[int], results: list):
-    plt.figure(figsize=(6, 4), dpi=200)
+    plt.figure(dpi=200)
     for r in results:
         plt.plot(
             times,
