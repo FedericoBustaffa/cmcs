@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_simulation(times: list[int], results: list):
-    plt.figure(dpi=200)
     for r in results:
         plt.plot(
             times,
@@ -15,8 +14,23 @@ def plot_simulation(times: list[int], results: list):
     plt.show()
 
 
+class DiscreteSimulator:
+    def __init__(self, func, params):
+        self.func = func
+        self.params = params
+
+    def __call__(self, stop: int, start: int = 0, step: int = 1):
+        pass
+
+
 def discrete_simulation(
-    func, initial_values: list, parameters: list, timesteps: int, step: int = 1, start=0
+    func,
+    initial_values: list,
+    parameters: list,
+    timesteps: int,
+    step: int = 1,
+    start=0,
+    plot=False,
 ):
     values = [initial_values]
     times = [t for t in range(start, timesteps + 1, step)]
@@ -25,7 +39,9 @@ def discrete_simulation(
         initial_values = values[-1]
 
     results = [list(i) for i in list(zip(*values))]
-    plot_simulation(times, results)
+
+    if plot:
+        plot_simulation(times, results)
 
     return results
 
@@ -46,6 +62,16 @@ if __name__ == "__main__":
     gamma = 0.18  # children to adults rate
     years = 100
 
+    DiscreteSimulator(density, {"func"})
+
     adults, children = discrete_simulation(
-        density, [a0, c0], [alpha, beta, gamma], years, 3
+        density, [a0, c0], [alpha, beta, gamma], years, 3, plot=True
     )
+    print(f"adults final density: {adults[-1]}")
+    print(f"children final density: {children[-1]}")
+
+    adults, children = discrete_simulation(
+        density, [100, 10], [0.05, 0.08, gamma], years, 3, plot=True
+    )
+    print(f"adults final density: {adults[-1]}")
+    print(f"children final density: {children[-1]}")
