@@ -1,52 +1,22 @@
-import matplotlib.pyplot as plt
-
-
-def plot_simulation(times: list[int], results: list):
-    for r in results:
-        plt.plot(
-            times,
-            r,
-            marker="o",
-            mfc="none",
-        )
-    plt.grid()
-    plt.tight_layout()
-    plt.show()
-
-
-class DiscreteSimulator:
-    def __init__(self, func, params):
-        self.func = func
-        self.params = params
-
-    def __call__(self, stop: int, start: int = 0, step: int = 1):
-        pass
-
-
 def discrete_simulation(
     func,
-    initial_values: list,
+    state: list,
     parameters: list,
     timesteps: int,
     step: int = 1,
     start=0,
-    plot=False,
 ):
-    values = [initial_values]
+    values = [state]
     times = [t for t in range(start, timesteps + 1, step)]
     for _ in times[1:]:
-        values.append(func(initial_values, parameters))
-        initial_values = values[-1]
+        values.append(func(state, parameters))
+        state = values[-1]
 
-    results = [list(i) for i in list(zip(*values))]
-
-    if plot:
-        plot_simulation(times, results)
-
-    return results
+    return [list(i) for i in list(zip(*values))]
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
 
     def density(n0, params):
         a0, c0 = n0
@@ -61,17 +31,20 @@ if __name__ == "__main__":
     beta = 0.01  # children birth rate
     gamma = 0.18  # children to adults rate
     years = 100
-
-    DiscreteSimulator(density, {"func"})
-
-    adults, children = discrete_simulation(
-        density, [a0, c0], [alpha, beta, gamma], years, 3, plot=True
-    )
-    print(f"adults final density: {adults[-1]}")
-    print(f"children final density: {children[-1]}")
+    step = 3
 
     adults, children = discrete_simulation(
-        density, [100, 10], [0.05, 0.08, gamma], years, 3, plot=True
+        density, [a0, c0], [alpha, beta, gamma], years, step
     )
-    print(f"adults final density: {adults[-1]}")
-    print(f"children final density: {children[-1]}")
+    print(f"adults final density: {adults[-1]:.2f}")
+    print(f"children final density: {children[-1]:.2f}")
+
+    times = [t for t in range(0, years + 1, 3)]
+    plt.figure(dpi=150)
+    plt.title("Adults and Children Densities")
+    plt.plot(times, adults, marker="o", mfc="none", label="adults")
+    plt.plot(times, children, marker="o", mfc="none", label="children")
+    plt.grid()
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
