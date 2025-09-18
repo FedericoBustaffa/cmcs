@@ -1,36 +1,40 @@
+from typing import Callable
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import fsolve
 
 
-def c_birth(n0, rate, t):
-    return n0 * np.exp(rate * t)
-
-
-def density(n, rate):
-    return rate * n
-
-
-def explicit(y0: float, rate: float, start: float, step: float, stop: float):
-    timesteps = np.arange(start, stop + step, step)
+def explicit(
+    derivative: Callable,
+    y0: float,
+    args: tuple,
+    timesteps,
+):
+    step = timesteps[1] - timesteps[0]
     results = [y0]
 
     y = y0
     for _ in timesteps[:-1]:
-        y = y + step * rate * y
+        y = y + step * derivative(y, _, *args)
         results.append(y)
 
     return timesteps, np.asarray(results)
 
 
-def implicit(y0: float, rate: float, start: float, step: float, stop: float):
-    timesteps = np.arange(start, stop + step, step)
+def implicit(
+    derivative: Callable,
+    y0: float,
+    args: tuple,
+    timesteps,
+):
+    step = timesteps[1] - timesteps[0]
     results = [y0]
 
     y = y0
     for _ in timesteps[:-1]:
-        func = lambda y1: y1 - y - step * rate * y1
+        func = lambda y1: y1 - y - step * derivative(y1, _, *args)
         y = fsolve(func, y)[0]
         results.append(y)
 
@@ -38,28 +42,37 @@ def implicit(y0: float, rate: float, start: float, step: float, stop: float):
 
 
 if __name__ == "__main__":
+
+    def logistic(n0, t, r, K):
+        return K / (1 + (K / n0 - 1) * np.exp(-r * t))
+
+    def derivative(n0, t, r, K):
+        return r * n0 * (1 - n0 / K)
+
     N_0 = 5
-    rate = np.log(1.5)
-    times = np.linspace(0, 10, 50)
-    step = 0.5
+    K = 50
+    rate = np.log(1.1)
+    times = np.linspace(0, 100, 50)
+    step = 10
 
     plt.figure(figsize=(8, 5), dpi=200)
     plt.title(rf"Euler Method ($\tau = {step:.1f}$)")
 
     # exact solution
-    plt.plot(times, [c_birth(N_0, rate, t) for t in times], label="exact")
+    exact_sol = [logistic(N_0, t, rate, K) for t in times]
+    plt.plot(times, exact_sol, label="exact")
 
     # euler
-    i_times, i_values = explicit(N_0, rate, 0, step, 10)
-    plt.plot(i_times, i_values, marker="s", label="explicit")
+    timesteps = np.arange(0, times.max() + step, step)
+    i_times, i_values = explicit(derivative, N_0, (rate, K), timesteps)
+    plt.plot(i_times, i_values, marker="o", mfc="none", label="explicit")
 
-    i_times, i_values = implicit(N_0, rate, 0, step, 10)
-    plt.plot(i_times, i_values, marker="s", label="implicit")
+    i_times, i_values = implicit(derivative, N_0, (rate, K), timesteps)
+    plt.plot(i_times, i_values, marker="o", mfc="none", label="implicit")
 
     # scipy odeint
-    times = np.linspace(0, 10, 10)
-    sol = odeint(density, N_0, times, args=(rate,))
-    # plt.plot(times, sol, marker="s", label="scipy")
+    sol = odeint(derivative, N_0, timesteps, args=(rate, K))
+    plt.plot(timesteps, sol, marker="s", mfc="none", label="scipy")
 
     plt.xlabel("Time")
     plt.ylabel("Density")
