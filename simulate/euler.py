@@ -50,7 +50,7 @@ if __name__ == "__main__":
         return r * n0 * (1 - n0 / K)
 
     N_0 = 5
-    K = 50
+    K = 25
     rate = np.log(1.1)
     times = np.linspace(0, 100, 50)
     step = 10
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     # scipy odeint
     sol = odeint(derivative, N_0, timesteps, args=(rate, K))
-    plt.plot(timesteps, sol, marker="s", mfc="none", label="scipy")
+    plt.plot(timesteps, sol, marker="o", mfc="none", label="scipy")
 
     plt.xlabel("Time")
     plt.ylabel("Density")
