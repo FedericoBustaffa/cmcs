@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,8 +9,8 @@ from scipy.optimize import fsolve
 def explicit(
     derivative: Callable,
     y0: float,
-    args: tuple,
-    timesteps,
+    args: Sequence,
+    timesteps: Sequence[float],
 ):
     step = timesteps[1] - timesteps[0]
     results = [y0]
@@ -26,8 +26,8 @@ def explicit(
 def implicit(
     derivative: Callable,
     y0: float,
-    args: tuple,
-    timesteps,
+    args: Sequence,
+    timesteps: Sequence[float],
 ):
     step = timesteps[1] - timesteps[0]
     results = [y0]
