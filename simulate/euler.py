@@ -8,7 +8,7 @@ def c_birth(n0, rate, t):
     return n0 * np.exp(rate * t)
 
 
-def density(n, t, rate):
+def density(n, rate):
     return rate * n
 
 
