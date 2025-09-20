@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "simulate"                                                    # nome del pacchetto
+name = "cmcs" # nome del pacchetto
 version = "0.1.0"
 description = "Simulation routines for complex systems"
 authors = [{ name = "Federico", email = "kiko.bustaffa@gmail.com" }]
@@ -12,4 +12,4 @@ dependencies = ["numpy", "scipy", "matplotlib", "pandas"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["simulate"]
+include = ["cmcs"]
