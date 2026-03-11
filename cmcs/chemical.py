@@ -40,3 +40,7 @@ def gillespie(concentrations, reactions, stop=100):
         values.append(concentrations.copy())
 
     return np.array(timesteps), np.array(values)
+
+
+if __name__ == "__main__":
+    pass
