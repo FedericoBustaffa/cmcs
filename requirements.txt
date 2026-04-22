@@ -2,3 +2,9 @@ ipykernel
 notebook
 jupyterlab
 pyqt6
+mesa
+mesa[rec]
+seaborn
+numpy
+pandas
+matplotlib
